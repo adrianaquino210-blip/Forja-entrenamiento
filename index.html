@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#101114">
+<meta name="description" content="Tu entrenador personal: rutinas, registro de cargas y progreso.">
+<link rel="manifest" href="manifest.json">
+<title>FORJA — Tu entrenamiento</title>
+<style>
+:root{--bg:#101114;--panel:#191b20;--panel2:#22252c;--text:#f5f6f8;--muted:#9da3af;--line:#30343d;--lime:#c8ff4d;--orange:#ff805c;--blue:#79a8ff;--radius:20px}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.4}
+button,input,select{font:inherit}button{cursor:pointer}.app{max-width:720px;margin:auto;min-height:100vh;padding:0 16px 100px}
+header{padding:22px 2px 14px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{font-size:22px;font-weight:950;letter-spacing:1.8px}.brand span{color:var(--lime)}.subbrand{color:var(--muted);font-size:11px;letter-spacing:1.8px;text-transform:uppercase}
+.avatar{width:42px;height:42px;border-radius:50%;background:var(--lime);color:#101114;font-weight:900;display:grid;place-items:center;border:0}
+h1{font-size:30px;line-height:1.08;margin:16px 0 8px;letter-spacing:-.8px}h2{font-size:20px;margin:0 0 12px}h3{font-size:15px;margin:0 0 7px}
+p{margin:5px 0;color:var(--muted)}.eyebrow{font-size:11px;letter-spacing:1.7px;color:var(--lime);font-weight:800;text-transform:uppercase}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin:12px 0}.hero{background:linear-gradient(140deg,#252a20,#191b20 62%);border-color:#39432b;overflow:hidden;position:relative;padding:20px}
+.hero:after{content:"";position:absolute;right:-32px;top:-38px;width:170px;height:170px;border:24px solid #c8ff4d12;border-radius:50%}
+.big-num{font-size:30px;font-weight:900;letter-spacing:-1px}.unit{font-size:12px;color:var(--muted);font-weight:600}.metric{font-size:12px;color:var(--muted)}.lime{color:var(--lime)}.orange{color:var(--orange)}
+.primary,.secondary,.danger{border:0;border-radius:14px;padding:13px 16px;font-weight:850;width:100%;margin-top:10px}.primary{background:var(--lime);color:#11130d}.secondary{background:var(--panel2);color:var(--text);border:1px solid var(--line)}.danger{background:#442724;color:#ffb1a1}
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px}.row.start{align-items:flex-start}.pill{background:#2b3037;color:#dfe3e9;border-radius:99px;padding:6px 10px;font-size:11px;font-weight:750;white-space:nowrap}.pill.active{background:#35451e;color:var(--lime)}
+.exercise{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}.exercise:last-child{border-bottom:0}.exercise-icon{width:46px;height:46px;flex:0 0 46px;border-radius:14px;background:#292d35;display:grid;place-items:center;font-size:21px}.exercise-info{flex:1;min-width:0}.exercise-info strong{display:block;font-size:14px}.exercise-info small{color:var(--muted)}.mini{border:1px solid var(--line);background:var(--panel2);color:var(--text);border-radius:11px;padding:9px 11px;font-weight:800}
+nav{position:fixed;bottom:0;left:0;right:0;z-index:10;background:#141519f2;border-top:1px solid var(--line);backdrop-filter:blur(20px);padding:8px max(10px,calc((100vw - 720px)/2)) calc(8px + env(safe-area-inset-bottom));display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+nav button{background:transparent;border:0;color:var(--muted);padding:8px 2px;font-size:10px;font-weight:800;display:grid;gap:4px;justify-items:center}nav button b{font-size:20px;font-weight:500}nav button.active{color:var(--lime)}
+.view{display:none}.view.active{display:block}
+input,select{background:#111216;color:var(--text);border:1px solid var(--line);border-radius:12px;padding:12px;width:100%;margin:5px 0 12px;outline:none}label{font-size:12px;color:#c6cad1;font-weight:750;display:block;margin-top:8px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.small-note{font-size:11px;color:var(--muted)}.notice{padding:12px;border-radius:14px;background:#282a21;border:1px solid #41472f;color:#d9e6bc;font-size:12px;margin:12px 0}.empty{text-align:center;padding:26px 14px;color:var(--muted)}.chart{width:100%;height:160px;display:block}.week{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin:14px 0}.day{background:#22252c;border-radius:10px;text-align:center;padding:9px 2px;color:var(--muted);font-size:11px}.day.done{background:#35451e;color:var(--lime)}.footer-note{text-align:center;color:#717783;font-size:10px;padding:24px 0}
+@media(min-width:600px){.app{padding-left:24px;padding-right:24px}.hero{padding:28px}.big-num{font-size:34px}}
+</style>
+</head>
+<body>
+<div class="app">
+<header><div><div class="brand">FORJA<span>.</span></div><div class="subbrand">Tu entrenamiento, tus reglas</div></div><button class="avatar" id="headerAvatar" aria-label="Perfil">A</button></header>
+
+<section id="home" class="view active">
+  <div class="eyebrow" id="welcomeEyebrow">A ENTRENAR</div>
+  <h1 id="greeting">Construí tu<br>mejor versión.</h1>
+  <p id="dateLine">Un entrenamiento a la vez.</p>
+  <div class="card hero">
+    <div class="row"><span class="pill active" id="todayPill">PLAN DE HOY</span><span class="eyebrow">FUERZA · VOLUMEN</span></div>
+    <h2 id="todayTitle" style="font-size:24px;margin-top:18px">Tren superior</h2>
+    <p id="todayDesc">Elegí tu rutina y registrá cada serie.</p>
+    <div class="row" style="margin-top:18px"><div><div class="big-num" id="todayCount">6 <span class="unit">ejercicios</span></div><div class="metric">Rutina sugerida</div></div><button class="mini" id="startToday">Empezar →</button></div>
+  </div>
+  <div class="grid">
+    <div class="card"><div class="metric">SESIONES REGISTRADAS</div><div class="big-num" id="sessionCount">0</div><p>en total</p></div>
+    <div class="card"><div class="metric">VOLUMEN DE HOY</div><div class="big-num" id="todayVolume">0 <span class="unit">kg</span></div><p>peso × repeticiones</p></div>
+  </div>
+  <div class="card"><div class="row"><h2>Tu semana</h2><span class="pill" id="weekCount">0 / 4 días</span></div><div class="week" id="weekStrip"></div><button class="secondary" data-go="routines">Ver todas las rutinas</button></div>
+  <div class="notice">Consejo: registrá tus pesos reales. Aumentá la carga de forma gradual y mantené una técnica segura.</div>
+</section>
+
+<section id="routines" class="view">
+  <div class="eyebrow">PLANIFICACIÓN</div><h1>Tus rutinas</h1><p>Plan inicial de 4 días orientado a hipertrofia. Podés editarlo después.</p>
+  <div id="routineList"></div>
+</section>
+
+<section id="workout" class="view">
+  <div class="eyebrow">SESIÓN ACTIVA</div><h1 id="workoutTitle">Entrenamiento</h1><p id="workoutSub">Anotá cada serie a medida que avanzás.</p>
+  <div class="card"><div class="row"><div><div class="metric">TIEMPO DE DESCANSO</div><div class="big-num" id="timer">01:30</div></div><button class="mini" id="timerBtn">Iniciar</button></div><div class="small-note">Temporizador simple de descanso. Mantené el teléfono activo para verlo.</div></div>
+  <div id="workoutExercises"></div>
+  <button class="primary" id="finishWorkout">Finalizar y guardar sesión</button>
+  <button class="secondary" id="cancelWorkout">Cancelar sesión</button>
+</section>
+
+<section id="progress" class="view">
+  <div class="eyebrow">DATOS REALES</div><h1>Tu progreso</h1><p>Lo que registrás te ayuda a decidir qué mejorar.</p>
+  <div class="grid"><div class="card"><div class="metric">ENTRENAMIENTOS</div><div class="big-num" id="progressSessions">0</div></div><div class="card"><div class="metric">SERIES REGISTRADAS</div><div class="big-num" id="progressSets">0</div></div></div>
+  <div class="card"><h2>Volumen por sesión</h2><canvas id="progressChart" class="chart" width="600" height="220"></canvas><p class="small-note">Estimación: suma de kilos × repeticiones de las series registradas.</p></div>
+  <div class="card"><h2>Historial</h2><div id="historyList" class="empty">Todavía no hay entrenamientos guardados.</div></div>
+</section>
+
+<section id="profile" class="view">
+  <div class="eyebrow">TU CUENTA</div><h1>Perfil y sincronización</h1><p>Guardá tus datos y usá la app en distintos dispositivos.</p>
+  <div class="card">
+    <h2>Datos físicos</h2>
+    <label>Nombre</label><input id="profileName" placeholder="Tu nombre">
+    <div class="form-grid"><div><label>Peso (kg)</label><input id="profileWeight" type="number" min="1" placeholder="83"></div><div><label>Altura (cm)</label><input id="profileHeight" type="number" min="1" placeholder="183"></div></div>
+    <div class="form-grid"><div><label>Edad</label><input id="profileAge" type="number" min="13" placeholder="35"></div><div><label>Días por semana</label><select id="profileDays"><option value="3">3 días</option><option value="4" selected>4 días</option><option value="5">5 días</option><option value="6">6 días</option></select></div></div>
+    <label>Objetivo</label><select id="profileGoal"><option value="hipertrofia">Ganar masa muscular</option><option value="fuerza">Ganar fuerza</option><option value="general">Condición física general</option></select>
+    <button class="primary" id="saveProfile">Guardar perfil</button>
+  </div>
+  <div class="card">
+    <h2>Cuenta y sincronización</h2>
+    <div class="notice" id="syncStatus">Modo local: los datos se guardan en este navegador. Para sincronizar entre dispositivos, configurá el proyecto gratuito de Supabase.</div>
+    <label>Correo electrónico</label><input id="authEmail" type="email" placeholder="vos@ejemplo.com" autocomplete="email">
+    <label>Contraseña</label><input id="authPassword" type="password" placeholder="Mínimo 6 caracteres" autocomplete="current-password">
+    <button class="primary" id="signUp">Crear cuenta / Registrarme</button><button class="secondary" id="signIn">Iniciar sesión</button><button class="secondary" id="syncNow">Sincronizar ahora</button><button class="danger" id="signOut">Cerrar sesión</button>
+    <p class="small-note">La sincronización requiere configurar las claves públicas del proyecto Supabase en config.js. Nunca pongas una clave secreta de servidor en esta app.</p>
+  </div>
+  <div class="card"><h2>Datos y privacidad</h2><p>Podés exportar tus datos a un archivo JSON. Guardalo en un lugar privado.</p><button class="secondary" id="exportData">Exportar mis datos</button><label>Importar copia JSON</label><input type="file" id="importFile" accept=".json,application/json"><button class="secondary" id="importData">Importar copia</button></div>
+</section>
+<div class="footer-note">FORJA · Entrená con intención. Progresá con paciencia.</div>
+</div>
+<nav>
+<button class="active" data-go="home"><b>⌂</b>Inicio</button><button data-go="routines"><b>▦</b>Rutinas</button><button data-go="progress"><b>↗</b>Progreso</button><button data-go="profile"><b>◎</b>Perfil</button>
+</nav>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<script>
+const $=id=>document.getElementById(id);
+const DEFAULT_ROUTINES=[
+{id:"upper",name:"Torso A",subtitle:"Pecho · espalda · hombros",day:"Día 1",icon:"🏋️",exercises:[
+["Press de banca",4,8,"Pecho"],["Remo sentado en polea",4,10,"Espalda"],["Press inclinado con mancuernas",3,10,"Pecho"],["Jalón al pecho",3,10,"Espalda"],["Elevaciones laterales",3,12,"Hombros"],["Extensión de tríceps en polea",3,12,"Brazos"]]},
+{id:"lower",name:"Piernas A",subtitle:"Cuádriceps · glúteos · gemelos",day:"Día 2",icon:"🦵",exercises:[
+["Sentadilla o prensa",4,8,"Piernas"],["Peso muerto rumano",3,10,"Isquios"],["Prensa de piernas",3,12,"Piernas"],["Hip thrust",4,10,"Glúteos"],["Curl femoral",3,12,"Isquios"],["Elevación de gemelos",3,15,"Gemelos"]]},
+{id:"upper2",name:"Torso B",subtitle:"Espalda · pecho · brazos",day:"Día 3",icon:"💪",exercises:[
+["Jalón al pecho",4,8,"Espalda"],["Press con mancuernas",4,10,"Pecho"],["Remo con mancuerna",3,10,"Espalda"],["Pájaros para deltoides posterior",3,12,"Hombros"],["Curl de bíceps",3,12,"Brazos"],["Fondos asistidos o tríceps",3,10,"Brazos"]]},
+{id:"lower2",name:"Piernas B",subtitle:"Glúteos · cadena posterior · core",day:"Día 4",icon:"⚡",exercises:[
+["Peso muerto con técnica supervisada",3,6,"Cadena posterior"],["Sentadilla búlgara",3,10,"Piernas"],["Hip thrust",4,8,"Glúteos"],["Extensión de cuádriceps",3,12,"Piernas"],["Curl femoral",3,12,"Isquios"],["Plancha",3,30,"Core"]]}
+];
+const emptyData=()=>({profile:{name:"Adri",weight:83,height:183,age:35,days:4,goal:"hipertrofia"},routines:DEFAULT_ROUTINES,sessions:[]});
+let data=loadData(), activeRoutine=null, activeSession=null, timerInterval=null, remaining=90, supabase=null, currentUser=null;
+function loadData(){try{return JSON.parse(localStorage.getItem("forja_data"))||emptyData()}catch(e){return emptyData()}}
+function saveLocal(){localStorage.setItem("forja_data",JSON.stringify(data));renderAll()}
+function escapeHtml(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function fmtDate(d){return new Date(d).toLocaleDateString("es-AR",{day:"2-digit",month:"short"})}
+function go(view){document.querySelectorAll(".view").forEach(x=>x.classList.toggle("active",x.id===view));document.querySelectorAll("nav button").forEach(x=>x.classList.toggle("active",x.dataset.go===view));if(view==="progress")drawChart();window.scrollTo({top:0,behavior:"smooth"})}
+document.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>go(b.dataset.go)));
+$("headerAvatar").onclick=()=>go("profile");
+function renderRoutines(){
+ $("routineList").innerHTML=data.routines.map(r=>`<div class="card"><div class="row start"><div class="exercise-icon">${r.icon}</div><div style="flex:1"><div class="eyebrow">${r.day}</div><h2 style="margin:4px 0">${escapeHtml(r.name)}</h2><p>${escapeHtml(r.subtitle)}</p><span class="pill">${r.exercises.length} ejercicios</span></div></div><button class="primary" data-start="${r.id}">Comenzar rutina →</button><button class="secondary" data-edit="${r.id}">Editar ejercicios</button></div>`).join("");
+ document.querySelectorAll("[data-start]").forEach(b=>b.onclick=()=>startWorkout(b.dataset.start));
+ document.querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>editRoutine(b.dataset.edit));
+}
+function editRoutine(id){const r=data.routines.find(x=>x.id===id);const txt=prompt("Editá la rutina escribiendo un ejercicio por línea en formato: Nombre | series | repeticiones",r.exercises.map(e=>`${e[0]} | ${e[1]} | ${e[2]}`).join("\n"));if(txt===null)return;const ex=txt.split("\n").map(l=>l.split("|").map(x=>x.trim())).filter(a=>a[0]).map(a=>[a[0],Math.max(1,parseInt(a[1])||3),Math.max(1,parseInt(a[2])||10),"Personalizado"]);if(!ex.length){alert("Agregá al menos un ejercicio.");return}r.exercises=ex;saveLocal();alert("Rutina actualizada.")}
+function startWorkout(id){activeRoutine=data.routines.find(x=>x.id===id);activeSession={id:crypto.randomUUID?crypto.randomUUID():String(Date.now()),routineId:id,routineName:activeRoutine.name,date:new Date().toISOString(),sets:[]};$("workoutTitle").textContent=activeRoutine.name;$("workoutSub").textContent=activeRoutine.subtitle;renderWorkout();go("workout")}
+function renderWorkout(){$("workoutExercises").innerHTML=activeRoutine.exercises.map((e,i)=>`<div class="card"><div class="row"><div><div class="eyebrow">EJERCICIO ${i+1}</div><h2 style="margin:5px 0">${escapeHtml(e[0])}</h2><p>Objetivo: ${e[1]} series × ${e[2]} reps</p></div><span class="exercise-icon">🏋️</span></div><div class="form-grid"><div><label>Peso (kg)</label><input type="number" min="0" step="0.5" id="weight-${i}" placeholder="0"></div><div><label>Repeticiones</label><input type="number" min="1" id="reps-${i}" value="${e[2]}"></div></div><button class="secondary" data-log="${i}">＋ Registrar serie</button><div id="logged-${i}" class="small-note" style="margin-top:8px">Todavía no registraste series.</div></div>`).join("");
+ document.querySelectorAll("[data-log]").forEach(b=>b.onclick=()=>logSet(Number(b.dataset.log)))}
+function logSet(i){const w=Math.max(0,Number($("weight-"+i).value)||0),r=Math.max(1,Number($("reps-"+i).value)||1);activeSession.sets.push({exercise:activeRoutine.exercises[i][0],weight:w,reps:r,volume:w*r});const logged=activeSession.sets.filter(s=>s.exercise===activeRoutine.exercises[i][0]);$("logged-"+i).textContent=logged.map((s,j)=>`Serie ${j+1}: ${s.weight} kg × ${s.reps} reps`).join(" · ");$("todayVolume").innerHTML=activeSession.sets.reduce((a,s)=>a+s.volume,0).toLocaleString("es-AR")+` <span class="unit">kg</span>`}
+$("finishWorkout").onclick=async()=>{if(!activeSession)return;if(!activeSession.sets.length&&!confirm("No registraste series. ¿Guardar igual?"))return;activeSession.volume=activeSession.sets.reduce((a,s)=>a+s.volume,0);data.sessions.unshift(activeSession);activeSession=null;saveLocal();await syncData();go("progress");alert("¡Entrenamiento guardado!")}
+$("cancelWorkout").onclick=()=>{if(confirm("¿Cancelar esta sesión sin guardarla?")){activeSession=null;go("routines")}}
+$("startToday").onclick=()=>startWorkout(data.routines[0].id);
+function renderHome(){const p=data.profile; $("greeting").innerHTML=`${p.name?`¡Vamos, ${escapeHtml(p.name)}!`:"Construí tu"}<br>mejor versión.`;$("dateLine").textContent=new Date().toLocaleDateString("es-AR",{weekday:"long",day:"numeric",month:"long"});const day=new Date().getDay();const idx=day===0?0:(day-1)%data.routines.length;const r=data.routines[idx];$("todayTitle").textContent=r.name;$("todayDesc").textContent=r.subtitle;$("todayCount").innerHTML=`${r.exercises.length} <span class="unit">ejercicios</span>`;$("sessionCount").textContent=data.sessions.length;$("todayVolume").innerHTML=`${data.sessions[0]?.date?.slice(0,10)===new Date().toISOString().slice(0,10)?data.sessions[0].volume.toLocaleString("es-AR"):0} <span class="unit">kg</span>`;$("weekCount").textContent=`${Math.min(p.days, new Set(data.sessions.filter(s=>Date.now()-new Date(s.date).getTime()<7*86400000).map(s=>new Date(s.date).toDateString())).size)} / ${p.days} días`;const names=["D","L","M","M","J","V","S"];const weekStart=new Date();weekStart.setDate(weekStart.getDate()-weekStart.getDay());$("weekStrip").innerHTML=names.map((n,i)=>{const d=new Date(weekStart);d.setDate(d.getDate()+i);const done=data.sessions.some(s=>new Date(s.date).toDateString()===d.toDateString());return `<div class="day ${done?"done":""}">${n}<br><strong>${d.getDate()}</strong></div>`}).join("")}
+function renderProfile(){const p=data.profile;$("profileName").value=p.name||"";$("profileWeight").value=p.weight||"";$("profileHeight").value=p.height||"";$("profileAge").value=p.age||"";$("profileDays").value=String(p.days||4);$("profileGoal").value=p.goal||"hipertrofia"}
+$("saveProfile").onclick=()=>{data.profile={...data.profile,name:$("profileName").value.trim(),weight:Number($("profileWeight").value)||"",height:Number($("profileHeight").value)||"",age:Number($("profileAge").value)||"",days:Number($("profileDays").value),goal:$("profileGoal").value};saveLocal();alert("Perfil guardado.")};
+function renderProgress(){$("progressSessions").textContent=data.sessions.length;$("progressSets").textContent=data.sessions.reduce((a,s)=>a+s.sets.length,0);const h=$("historyList");if(!data.sessions.length){h.className="empty";h.textContent="Todavía no hay entrenamientos guardados.";return}h.className="";h.innerHTML=data.sessions.slice(0,15).map(s=>`<div class="exercise"><div class="exercise-icon">✓</div><div class="exercise-info"><strong>${escapeHtml(s.routineName)}</strong><small>${fmtDate(s.date)} · ${s.sets.length} series</small></div><span class="pill">${(s.volume||0).toLocaleString("es-AR")} kg</span></div>`).join("")}
+function drawChart(){const c=$("progressChart"),ctx=c.getContext("2d"),w=c.width,h=c.height;ctx.clearRect(0,0,w,h);ctx.strokeStyle="#30343d";ctx.lineWidth=1;for(let i=1;i<4;i++){ctx.beginPath();ctx.moveTo(24,i*h/4);ctx.lineTo(w-12,i*h/4);ctx.stroke()}const ss=data.sessions.slice(0,8).reverse();if(!ss.length){ctx.fillStyle="#9da3af";ctx.font="18px sans-serif";ctx.fillText("Registrá tu primera sesión",150,110);return}const max=Math.max(...ss.map(s=>s.volume||0),1);const gap=(w-60)/ss.length;ss.forEach((s,i)=>{const bh=((s.volume||0)/max)*(h-50);const x=32+i*gap+gap*.15;ctx.fillStyle="#c8ff4d";ctx.beginPath();ctx.roundRect(x,h-28-bh,gap*.65,bh,8);ctx.fill();ctx.fillStyle="#9da3af";ctx.font="12px sans-serif";ctx.fillText(fmtDate(s.date),x,h-8)})}
+function renderAll(){renderHome();renderRoutines();renderProfile();renderProgress();drawChart()}
+function initSupabase(){const cfg=window.FORJA_CONFIG||{};if(cfg.url&&cfg.anonKey&&!cfg.url.includes("YOUR_")&&!cfg.anonKey.includes("YOUR_")&&window.supabase){supabase=window.supabase.createClient(cfg.url,cfg.anonKey);supabase.auth.getSession().then(({data:{session}})=>{currentUser=session?.user||null;updateSyncStatus();if(currentUser)syncData()});supabase.auth.onAuthStateChange((_e,s)=>{currentUser=s?.user||null;updateSyncStatus();if(currentUser)syncData()})}else updateSyncStatus()}
+function updateSyncStatus(){const cfg=window.FORJA_CONFIG||{};if(!supabase){$("syncStatus").textContent="Modo local: tus datos quedan en este navegador. Para sincronizar entre dispositivos, configurá el proyecto gratuito de Supabase siguiendo el README.";return}$("syncStatus").textContent=currentUser?`Sesión iniciada: ${currentUser.email}. La sincronización está habilitada.`:"Supabase conectado. Creá una cuenta o iniciá sesión para sincronizar."}
+async function syncData(){if(!supabase||!currentUser)return;try{const {data:remote,error}=await supabase.from("forja_user_data").select("payload").eq("user_id",currentUser.id).maybeSingle();if(error)throw error;if(remote?.payload){const localTime=Math.max(...data.sessions.map(s=>new Date(s.date).getTime()),0);const remoteTime=Math.max(...(remote.payload.sessions||[]).map(s=>new Date(s.date).getTime()),0);if(remoteTime>localTime)data=remote.payload;else await pushData();saveLocal()}else await pushData();updateSyncStatus()}catch(e){$("syncStatus").textContent="No se pudo sincronizar: "+e.message+" · Revisá la configuración de Supabase."}}
+async function pushData(){if(!supabase||!currentUser)return;const {error}=await supabase.from("forja_user_data").upsert({user_id:currentUser.id,payload:data,updated_at:new Date().toISOString()},{onConflict:"user_id"});if(error)throw error}
+$("signUp").onclick=async()=>{if(!supabase)return alert("Primero configurá Supabase con los pasos del archivo README.");const email=$("authEmail").value.trim(),password=$("authPassword").value;if(!email||password.length<6)return alert("Ingresá un correo y una contraseña de al menos 6 caracteres.");const {error}=await supabase.auth.signUp({email,password});if(error)alert(error.message);else alert("Registro enviado. Si Supabase pide confirmar el correo, revisá tu bandeja y luego iniciá sesión.")};
+$("signIn").onclick=async()=>{if(!supabase)return alert("Primero configurá Supabase con los pasos del archivo README.");const {error}=await supabase.auth.signInWithPassword({email:$("authEmail").value.trim(),password:$("authPassword").value});if(error)alert(error.message);else{await syncData();alert("Sesión iniciada.")}};
+$("signOut").onclick=async()=>{if(supabase)await supabase.auth.signOut();currentUser=null;updateSyncStatus();alert("Sesión cerrada.")};
+$("syncNow").onclick=async()=>{try{await syncData();alert(currentUser?"Sincronización finalizada.":"Todavía estás en modo local o no iniciaste sesión.")}catch(e){alert(e.message)}};
+$("exportData").onclick=()=>{const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="forja-copia-seguridad.json";a.click();URL.revokeObjectURL(a.href)};
+let importPayload=null;$("importFile").onchange=async e=>{const f=e.target.files[0];if(!f)return;try{importPayload=JSON.parse(await f.text());alert("Archivo listo para importar.")}catch(err){alert("El archivo no es un JSON válido.");importPayload=null}};
+$("importData").onclick=async()=>{if(!importPayload||!importPayload.profile||!Array.isArray(importPayload.sessions))return alert("Elegí una copia JSON válida primero.");if(confirm("Esto reemplazará los datos actuales. ¿Continuar?")){data=importPayload;saveLocal();await syncData();alert("Copia importada.")}};
+$("timerBtn").onclick=()=>{if(timerInterval){clearInterval(timerInterval);timerInterval=null;$("timerBtn").textContent="Continuar";return}remaining=90;timerInterval=setInterval(()=>{remaining--;if(remaining<=0){clearInterval(timerInterval);timerInterval=null;remaining=0;$("timerBtn").textContent="Reiniciar";if(navigator.vibrate)navigator.vibrate([250,100,250])}$("timer").textContent=`${String(Math.floor(remaining/60)).padStart(2,"0")}:${String(remaining%60).padStart(2,"0")}`},1000);$("timerBtn").textContent="Pausar"};
+renderAll();initSupabase();
+if("serviceWorker" in navigator && location.protocol.startsWith("http"))navigator.serviceWorker.register("sw.js").catch(()=>{});
+</script>
+</body></html>

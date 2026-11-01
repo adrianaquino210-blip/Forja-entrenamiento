@@ -1,0 +1,10 @@
+{
+  "name": "FORJA — Tu entrenamiento",
+  "short_name": "FORJA",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#101114",
+  "theme_color": "#101114",
+  "description": "Rutinas, registro de cargas y progreso personal.",
+  "icons": []
+}
